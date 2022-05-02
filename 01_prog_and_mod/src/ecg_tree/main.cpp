@@ -33,7 +33,33 @@ int main()
 
     // ANCHOR - Aufgabe 1.2.3
     // tree->print(std::cout);
-    std::cout << tree;
+    //std::cout << tree;
+
+	delete root;
+
+	std::cout << "### Zusatz ###" << std::endl;
+
+	// Zusatz 1
+	Node * cyc = new Node("1");
+	cyc->add_child(new Node("2"));
+
+	Node * n3 = new Node("3");
+	Node * n4 = new Node("4");
+	n4->add_child(n3);
+	n3->add_child(n4);
+
+	Node * n5 = new Node("5");
+	n3->add_child(n5);
+	
+	Node * n6 = new Node("6");
+	n5->add_child(n6);
+	n6->add_child(n4);
+
+	cyc->add_child(n3);
+
+	traverse_without_cycles(std::cout, cyc, 0);
+
+	// Zusatz 2
 
     return 0;
 }

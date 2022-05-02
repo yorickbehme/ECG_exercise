@@ -1,13 +1,13 @@
 #include <iostream>  // ANCHOR - Aufgabe 1.1.3
 #include <sstream>
+#include <algorithm>
 
 #include "node.h"
 
-int Node::node_id = 0; // ANCHOR - Aufgabe 1.2.1
-
 Node::Node(const std::string& name)
 {
-    Node::node_id++;  // NOTE - ids sollen mit 1 beginnen
+	static int node_id = 1;
+	this->node_id = node_id++;
     if (name == "")
     {
         // ANCHOR - Aufgabe 1.2.1
@@ -19,8 +19,10 @@ Node::Node(const std::string& name)
         std::string node_id_str = str_sm.str();
         this->name = node_id_str;
     }
-    else
-        this->name = name;
+	else {
+		this->name = name;
+	}
+		
 }
 
 Node::~Node()
@@ -89,4 +91,26 @@ std::ostream& operator<<(std::ostream& os, Node * n_ptr)
 {
     // ANCHOR - Aufgabe 1.2.3
     return n_ptr->print(os);
+}
+
+// Zusatzaufgabe 1
+
+std::ostream& traverse_without_cycles(std::ostream& os, Node * n_ptr, int offset)
+{
+	static std::vector<int> visited_nodes;
+	// os << "[debug] n_ptr.name = "<< n_ptr->get_name() << "n_ptr.id=" << n_ptr->node_id << std::endl;
+
+	if (std::find(visited_nodes.begin(), visited_nodes.end(), n_ptr->node_id) != visited_nodes.end())
+	{
+		os << "cycle detected" << std::endl;
+	}
+	else{
+		visited_nodes.push_back(n_ptr->node_id);
+		os << std::string(offset, ' ') << n_ptr->get_name() << std::endl;
+		for (int idx = 0; idx < n_ptr->get_nr_children(); idx++) {
+			Node * child = n_ptr->get_child(idx);
+			traverse_without_cycles(os, child, offset+1);
+		}
+	}
+	return os;
 }
